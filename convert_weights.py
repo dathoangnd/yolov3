@@ -13,6 +13,8 @@ def load_weights(model,cfgfile,weightfile):
             conv_layer = model.get_layer('conv_' + str(i))
             print("layer: ",i+1,conv_layer)
             filters = conv_layer.filters
+            if i in [81, 93, 105]:
+              filters = 255
             k_size = conv_layer.kernel_size[0]
             in_dim = conv_layer.input_shape[-1]
             if "batch_normalize" in block:
@@ -36,7 +38,10 @@ def load_weights(model,cfgfile,weightfile):
                 norm_layer.set_weights(bn_weights)
                 conv_layer.set_weights([conv_weights])
             else:
-                conv_layer.set_weights([conv_weights, conv_bias])
+                try:
+                  conv_layer.set_weights([conv_weights, conv_bias])
+                except:
+                  pass
                 
     assert len(fp.read()) == 0, 'failed to read all data'
     fp.close()

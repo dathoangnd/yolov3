@@ -33,6 +33,8 @@ def YOLOv3Net(cfgfile, model_size, num_classes):
         if (block["type"] == "convolutional"):
             activation = block["activation"]
             filters = int(block["filters"])
+            if i in [81, 93, 105]:
+              filters = 3 * (5+num_classes)
             kernel_size = int(block["size"])
             strides = int(block["stride"])
             if strides > 1:
@@ -48,9 +50,6 @@ def YOLOv3Net(cfgfile, model_size, num_classes):
                 inputs = BatchNormalization(name='bnorm_' + str(i), trainable=i in [81, 93, 105])(inputs)
             #if activation == "leaky":
                 inputs = LeakyReLU(alpha=0.1, name='leaky_' + str(i))(inputs)
-                
-            if num_classes != 80 and i in [81, 93, 105]:
-                inputs = Conv2D(3*(5+num_classes), (1, 1))(inputs)
         elif (block["type"] == "upsample"):
             stride = int(block["stride"])
             inputs = UpSampling2D(stride)(inputs)
